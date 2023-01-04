@@ -1,0 +1,55 @@
+{
+    "profile": [
+        {
+            "endpoint": "/test-1",
+            "method": "GET",
+            "output_encoding": "string",
+            "backend_url_pattern": "/__debug/dev",
+            "backend_method": "GET",
+            "backend_host": "http://localhost:8080"
+        },
+        {
+            "endpoint": "/test-2",
+            "method": "GET",
+            "output_encoding": "string",
+            "backend_url_pattern": "/__debug/dev",
+            "backend_method": "GET",
+            "backend_host": "http://localhost:8080"
+        }
+        ,
+        {
+            "endpoint": "/entries",
+            "method": "GET",
+            "output_encoding": "json",
+            "backend_url_pattern": "/entries",
+            "backend_method": "GET",
+            "backend_host": "https://api.publicapis.org"
+        },
+        {
+            "endpoint": "/listings",
+            "method": "GET",
+            "output_encoding": "string",
+            "backend_url_pattern": "/listings",
+            "backend_method": "GET",
+            "backend_host": "172.16.1.119:3000"
+        }
+        ,
+        {
+            "endpoint": "/listOne",
+            "method": "GET",
+            "output_encoding": "json",
+            "backend_url_pattern": "/listOne",
+            "backend_method": "GET",
+            "backend_host": "172.16.1.119:3000"
+        }
+        ,
+        {
+            "endpoint": "/listCity/{city}",
+            "method": "GET",
+            "output_encoding": "json",
+            "backend_url_pattern": "/city_listings/{city}",
+            "backend_method": "GET",
+            "backend_host": "172.16.1.119:3000"
+        }
+    ]
+}
