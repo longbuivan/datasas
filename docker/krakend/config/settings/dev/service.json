@@ -1,0 +1,9 @@
+{
+	"port": 8080,
+	"environment": "DEVELOPMENT",
+	"default_host": "http://localhost:8080",
+	"timeout": "60s",
+	"cache_ttl": "300s",
+	"output_encoding": "json",
+	"extra_config": {}
+}

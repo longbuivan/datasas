@@ -1,0 +1,7 @@
+
+*node_modules/*
+
+.gitignore
+README.md
+/docker
+/k8s
