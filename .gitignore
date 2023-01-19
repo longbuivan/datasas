@@ -3,6 +3,7 @@
 # docker-compose.yml
 .gitignore
 README.md
+!webapp/client/README.md
 /docker
 /k8s
 *.docker*
