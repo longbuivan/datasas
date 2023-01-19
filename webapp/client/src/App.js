@@ -1,99 +1,80 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-restricted-globals */
-import React, { Component } from 'react';
-import './App.css';
-import axios from 'axios';
-import { Button, Container, Card, Row } from 'react-bootstrap'
+import { lazy, Suspense, useEffect } from "react";
+/// Components
+import Index from "./jsx/index";
+import { connect, useDispatch } from "react-redux";
+import { Route, Switch, withRouter } from "react-router-dom";
+// action
+import { checkAutoLogin } from "./services/AuthService";
+import { isAuthenticated } from "./store/selectors/AuthSelectors";
+/// Style
+import "./vendor/bootstrap-select/dist/css/bootstrap-select.min.css";
+import "./css/style.css";
 
-class App extends Component {
-  constructor(props) {
-    super(props)
-      this.state = {
-        setBookName: '',
-        setReview: '',
-        fetchData: [],
-        reviewUpdate: ''
-      }
-  }
+const SignUp = lazy(() => import("./jsx/pages/Registration"));
+const ForgotPassword = lazy(() => import("./jsx/pages/ForgotPassword"));
+const Login = lazy(() => {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(import("./jsx/pages/Login")), 500);
+  });
+});
+function App(props) {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    checkAutoLogin(dispatch, props.history);
+  }, [dispatch, props.history]);
 
-  handleChange = (event) => {
-    let nam = event.target.name;
-    let val = event.target.value
-    this.setState({
-      [nam]: val
-    })
-  }
-
-  handleChange2 = (event) => {
-    this.setState({
-      reviewUpdate: event.target.value
-    })
-  }
-
-  componentDidMount() {
-    axios.get("/api/get")
-      .then((response) => {
-        this.setState({
-          fetchData: response.data
-        })
-      })
-  }
-
-  submit = () => {
-    axios.post('/api/insert', this.state)
-      .then(() => { alert('success post') })
-    console.log(this.state)
-    document.location.reload();
-  }
-
-  delete = (id) => {
-    if (confirm("Do you want to delete? ")) {
-      axios.delete(`/api/delete/${id}`)
-      document.location.reload()
-    }
-  }
-
-  edit = (id) => {
-    axios.put(`/api/update/${id}`, this.state)
-    document.location.reload();
-  }
-  render() {
-
-    let card = this.state.fetchData.map((val, key) => {
-      return (
-        <React.Fragment>
-          <Card style={{ width: '18rem' }} className='m-2'>
-            <Card.Body>
-              <Card.Title>{val.book_name}</Card.Title>
-              <Card.Text>
-                {val.book_review}
-              </Card.Text>
-              <input name='reviewUpdate' onChange={this.handleChange2} placeholder='Update Review' ></input>
-              <Button className='m-2' onClick={() => { this.edit(val.id) }}>Update</Button>
-              <Button onClick={() => { this.delete(val.id) }}>Delete</Button>
-            </Card.Body>
-          </Card>
-        </React.Fragment>
-      )
-    })
-
+  //Routes when authenticate fail
+  let routes = (
+    <Switch>
+      <Route path="/login" component={Login} />
+      <Route path="/page-register" component={SignUp} />
+      <Route path="/page-forgot-password" component={ForgotPassword} />
+    </Switch>
+  );
+  if (props.isAuthenticated) {
     return (
-      <div className='App'>
-        <h1>Dockerized Fullstack React Application</h1>
-        <div className='form'>
-          <input name='setBookName' placeholder='Enter Book Name' onChange={this.handleChange} />
-          <input name='setReview' placeholder='Enter Review' onChange={this.handleChange} />
-        </div>
-
-        <Button className='my-2' variant="primary" onClick={this.submit}>Submit</Button> <br /><br/>
-
-        <Container>
-          <Row>
-            {card}
-          </Row>
-        </Container>
+      <>
+        <Suspense
+          fallback={
+            //Loader
+            <div id="preloader">
+              <div className="sk-three-bounce">
+                <div className="sk-child sk-bounce1"></div>
+                <div className="sk-child sk-bounce2"></div>
+                <div className="sk-child sk-bounce3"></div>
+              </div>
+            </div>
+          }
+        >
+          <Index />
+        </Suspense>
+      </>
+    );
+  } else {
+    return (
+      <div className="vh-100">
+        <Suspense
+          fallback={
+            <div id="preloader">
+              <div className="sk-three-bounce">
+                <div className="sk-child sk-bounce1"></div>
+                <div className="sk-child sk-bounce2"></div>
+                <div className="sk-child sk-bounce3"></div>
+              </div>
+            </div>
+          }
+        >
+          {routes}
+        </Suspense>
       </div>
     );
   }
 }
-export default App;
+
+const mapStateToProps = (state) => {
+  return {
+    isAuthenticated: isAuthenticated(state),
+  };
+};
+
+export default withRouter(connect(mapStateToProps)(App));

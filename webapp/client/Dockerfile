@@ -1,7 +1,9 @@
 FROM node:16
 WORKDIR /app
-COPY package.json ./
-COPY package-lock.json ./
+# COPY package.json ./
+# COPY package-lock.json ./
+# COPY ./public ./
+# COPY ./src ./
 COPY ./ ./
 RUN npm i
-CMD ["npm", "run", "start"]
+CMD ["npm", "start"]
