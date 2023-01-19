@@ -2,6 +2,6 @@
 
 Integrating Services using API
 
-### Facebook API
+## Facebook API
 
-### Google API
+## Google API
