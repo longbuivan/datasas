@@ -1,2 +1,5 @@
 flask
+flask_restful
+confluent_kafka
 psycopg2-binary
+hvac

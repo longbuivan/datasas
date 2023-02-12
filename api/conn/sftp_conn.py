@@ -1,16 +1,11 @@
-# import lib for sftp
 import paramiko
 import sys
 import logging
 import logging.handlers
 from io import BytesIO
-# import lib for AWS Cloud
-import boto3
 
-# create s3 client
-s3_client = boto3.client('s3')
-
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 # initialize variables
@@ -19,7 +14,6 @@ sftp_port = 22
 username = 'root'
 password = 'root'
 sftp_path = '/home/ubuntu/data'
-s3_bucket = 'ubuntu-data'
 
 
 class SFTPClient(object):
@@ -82,7 +76,15 @@ class SFTPClient(object):
             self.logger.error('SFTP Client Remove Error: {}'.format(e))
             sys.exit(1)
 
-def main():
+
+def _stream_binary_file(credentials):
+    files_bytes = []
+    sftp_host = credentials['sftp_host']
+    username = credentials['username']
+    password = credentials['password']
+    sftp_port = credentials['port']
+    sftp_path = credentials['sftp_path']
+
     sftp_client = SFTPClient(sftp_host, username, password, port=sftp_port)
     logging.info("Connecting to SFTP host: %s", sftp_host)
     sftp_client.connect()
@@ -98,7 +100,8 @@ def main():
         file_path = sftp_path + '/' + file_name
         data = sftp_client.open(file_path).read()
         logging.info("Uploading file: %s", file_name)
-        s3_client.upload_fileobj(BytesIO(data), s3_bucket, file_name)
+        files_bytes.append(BytesIO(data))
+
     logging.info("Uploading process completed")
     # Close the SFTP connection
     logging.info("Closing SFTP connection")
