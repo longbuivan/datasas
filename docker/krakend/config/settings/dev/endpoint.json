@@ -51,5 +51,15 @@
             "backend_method": "GET",
             "backend_host": "172.16.1.119:3000"
         }
+        ,
+        {
+            "endpoint": "/datasas/query",
+            "method": "GET",
+            "output_encoding": "json",
+            "backend_url_pattern": "/api/jdbc/query",
+            "body_encoding": "%7B%0A%20%20%20%20%22sql%22%3A%20%22SELECT%20%2A%20FROM%20dsp_hourly_analytics%20LIMIT%2010%3B%22%0A%7D%0A",
+            "backend_method": "POST",
+            "backend_host": "http://localhost:5001"
+        }
     ]
 }
