@@ -8,19 +8,11 @@ from common import read_connection_string_from_vault
 from jdbc_conn import _get_last_trans, _insert_trans
 from rest_api_conn import _get_data
 from kafka_conn import _get_kafka_consumer
-# from kafka_conn import _
 app = Flask(__name__)
 # api = Api(app)
 logging.basicConfig(filename='app.log', level=logging.INFO,
                     format='%(asctime)s %(message)s')
 
-def postgres_data():
-    conn = psycopg2.connect(database="postgres", user="postgres", password="postgres", host="localhost")
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM users")
-    rows = cur.fetchall()
-    conn.close()
-    return rows
 
 @app.route('/jdbc', methods=['GET', 'POST'])
 def jdbc_conn():
@@ -43,22 +35,27 @@ def jdbc_conn():
     vault_token = req['vault_token']
     secret_path = req['secret_path']
     table_name = req['table_name']
-    
+
     #  Read the connection string from Vault
-    secret = read_connection_string_from_vault(vault_url=vault_url, vault_token=vault_token, path=secret_path) 
-    
+    secret = read_connection_string_from_vault(
+        vault_url=vault_url, vault_token=vault_token, path=secret_path)
+
     if request.method == 'GET':
         last_timestamp = req['last_timestamp']
         secret = secret['connection_string']
-        ingested_data = _get_last_trans(request.method, conn_string=secret, table_name=table_name, last_transfer_timestamp=last_timestamp)
+        ingested_data = _get_last_trans(
+            request.method, conn_string=secret, table_name=table_name, last_transfer_timestamp=last_timestamp)
         return ingested_data
     elif request.method == 'POST':
         ingested_data = req['body']['ingested_data']
         columns = req['body']['columns']
-        affected_rows = _insert_trans(request.method, conn_string=secret, table_name=table_name, columns=columns, insert_data=ingested_data)
+        affected_rows = _insert_trans(request.method, conn_string=secret,
+                                      table_name=table_name, columns=columns, insert_data=ingested_data)
         return affected_rows
 
 # Rest API connection
+
+
 @app.route('/rest', methods=['GET', 'POST'])
 def rest_conn():
     """
@@ -79,13 +76,15 @@ def rest_conn():
     vault_token = req['vault_token']
     secret_path = req['secret_path']
 
-    secret = read_connection_string_from_vault(vault_url=vault_url, vault_token=vault_token, path=secret_path) 
+    secret = read_connection_string_from_vault(
+        vault_url=vault_url, vault_token=vault_token, path=secret_path)
 
     if request.method == 'GET':
         api_url = req['api_url']
         last_timestamp = req['last_timestamp']
         access_token = secret['access_token']
-        ingested_data = _get_data(api_url=api_url, access_token=access_token, last_timestamp=last_timestamp)
+        ingested_data = _get_data(
+            api_url=api_url, access_token=access_token, last_timestamp=last_timestamp)
         return ingested_data
     if request.method == 'POST':
         return json.dumps({'success': True, 'message': "Not implemented"})
@@ -112,7 +111,8 @@ def sftp_conn():
     vault_token = req['vault_token']
     secret_path = req['secret_path']
 
-    secret = read_connection_string_from_vault(vault_url=vault_url, vault_token=vault_token, path=secret_path) 
+    secret = read_connection_string_from_vault(
+        vault_url=vault_url, vault_token=vault_token, path=secret_path)
 
     if request.method == 'GET':
         api_url = req['api_url']
@@ -124,6 +124,8 @@ def sftp_conn():
         return json.dumps({'success': True, 'message': "Not implemented"})
 
 # Kafka connection
+
+
 @app.route('/kafka', methods=['GET', 'POST'])
 def kafka_conn():
     """
@@ -144,7 +146,8 @@ def kafka_conn():
     vault_token = req['vault_token']
     secret_path = req['secret_path']
 
-    secret = read_connection_string_from_vault(vault_url=vault_url, vault_token=vault_token, path=secret_path) 
+    secret = read_connection_string_from_vault(
+        vault_url=vault_url, vault_token=vault_token, path=secret_path)
 
     if request.method == 'GET':
         consumer_conf = req['consumer_conf']
@@ -156,7 +159,6 @@ def kafka_conn():
         return json.dumps({'success': True, 'message': "Not implemented"})
 
 
-
 if __name__ == '__main__':
     app.run(debug=True)
 #     # app.run(host='0.0.0.0', port=5000)
@@ -165,8 +167,3 @@ if __name__ == '__main__':
 #     # app.run(host='0.0.0.0', port=5000, threaded=True, use_reloader=True, use_debugger=True)
 
 #     # app.run(host='0.0.0.0', port=5000, threaded=True, use_reloader=True, use_debugger=True, use_evalex=True)
-
-
-
-
-
