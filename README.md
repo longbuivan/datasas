@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # DataSaS Project
 
 ## Description
@@ -113,3 +114,11 @@ The core package includes a lot of operators (connectors). You can get tweets fo
 Deploy on Local with MiniKube
 Enbale ingress service
 > minikube addons enable ingress
+=======
+# Open Data Apis Project
+
+## Description
+To combine multiple oen data sources into one single service.
+
+![Graph of Architecture](./publics/assets/concepture-design.png)
+>>>>>>> master

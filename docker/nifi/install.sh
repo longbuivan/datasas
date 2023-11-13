@@ -1,1 +1,0 @@
-docker run -it --rm -p 8080-8081:8080-8081 data.nifi:0.0.1
